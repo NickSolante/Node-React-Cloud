@@ -16,9 +16,9 @@ router.post("/register", (req, res) => {
   let errors = [];
 
   //check required fields
-  if (!name || !email || !password || password2) {
-    errors.push({ msg: "please fill in all fields" });
-  }
+  //   if (!name || !email || !password || password2) {
+  //     errors.push({ msg: "please fill in all fields" });
+  //   }
   //check if passwords match
   if (password != password2) {
     errors.push({ msg: "passwords do not match" });
@@ -56,8 +56,21 @@ router.post("/register", (req, res) => {
           email,
           password
         });
-        console.log(newUser);
-        res.send("hello");
+        //hash password
+        bcrypt.genSalt(10, (err, salt) =>
+          bcrypt.hash(newUser.password, salt, (err, hash) => {
+            if (err) throw err;
+            //set password to hashed
+            newUser.password = hash;
+            //save user
+            newUser
+              .save()
+              .then(user => {
+                res.redirect("/users/login");
+              })
+              .catch(err => console.log(err));
+          })
+        );
       }
     });
   }
