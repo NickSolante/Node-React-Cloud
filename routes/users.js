@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
+const passport = require("passport");
 //User model
 const User = require("../models/User");
 
@@ -66,6 +67,10 @@ router.post("/register", (req, res) => {
             newUser
               .save()
               .then(user => {
+                req.flash(
+                  "success_msg",
+                  "you are now registered and can login"
+                );
                 res.redirect("/users/login");
               })
               .catch(err => console.log(err));
@@ -75,5 +80,8 @@ router.post("/register", (req, res) => {
     });
   }
 });
+
+//login handle
+router.post("/login", (req, res) => {});
 
 module.exports = router;

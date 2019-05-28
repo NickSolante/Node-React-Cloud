@@ -6,7 +6,8 @@ const flash = require("connect-flash");
 const session = require("express-session");
 
 const app = express();
-
+//passport config
+require("./config/passport")(passport);
 //DB config
 
 const db = require("./config/keys").MongoURI;
@@ -16,6 +17,26 @@ const db = require("./config/keys").MongoURI;
 app.use(express.urlencoded({ extended: false }));
 
 //express session
+app.use(
+  session({
+    secret: "keyboard cat",
+    resave: true,
+    saveUninitialized: true
+  })
+);
+//passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+//connect flash
+app.use(flash());
+
+// global vars
+app.use((req, res, next) => {
+  res.locals.success_msg = req.flash("succsess_msg");
+  res.locals.error_msg = req.flash("error_msg");
+  next();
+});
 
 //connect to mongo
 
